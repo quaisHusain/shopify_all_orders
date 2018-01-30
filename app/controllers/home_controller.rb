@@ -1,7 +1,7 @@
 class HomeController < ShopifyApp::AuthenticatedController
 	skip_before_action :verify_authenticity_token, :only => [:webhookCreateaorder]
   def index
-  	Orderl.delete_all
+  #	Orderl.delete_all
   	count = ShopifyAPI::Order.find(:count)
   	puts count.count
   if Orderl.count() < 1
@@ -25,11 +25,14 @@ class HomeController < ShopifyApp::AuthenticatedController
 
 
   	count = ShopifyAPI::Order.find(:count).count
-	pages = count / 2
+	pages = count / 250
+	if pages == 0
+		pages = 1
+	end
 	order = nil
 	puts "count = "+count.to_s+" pages = "+pages.to_s
 	1.upto(pages) do |page|
-	  @orders1 = ShopifyAPI::Order.find(:all, params: {limit: 2, page: page})
+	  @orders1 = ShopifyAPI::Order.find(:all, params: {limit: 250, page: page, status: 'any'})
 	  #order = orders.find { |o| o.order_number == DESIRED_NUMBER }
 	  
     	
