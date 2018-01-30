@@ -1,0 +1,185 @@
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    ShopifyApp.ready(function(){
+      ShopifyApp.Bar.initialize({ title: "Home" });
+    });
+  </script>
+<% end %>
+<style type="text/css">
+  
+  table, tr, th, td {
+    text-align: center;
+    /*border-color: transparent;*/
+   border-bottom:1px;
+   border-bottom-style: solid;
+    line-height: 250%;
+
+    
+    
+  
+}
+
+table, td{
+  border-bottom-color: gray;
+}
+.table-css{
+    background-color: white;
+    margin: 50px;
+    padding: 20px;
+    border-radius: 10px;
+
+}
+
+
+table, th{
+  text-align: center;
+    border-collapse: collapse;
+    font-family: Arial;
+}
+
+.circle_red {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px; 
+    background-color: red;
+    margin: auto;
+    /*border-radius: transperant; */
+  /* width and height can be anything, as long as they're equal */
+}
+
+.circle_green {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px; 
+    background-color: green;
+    border-radius: transperant; 
+    margin: auto;
+  /* width and height can be anything, as long as they're equal */
+}
+
+.circle_yellow {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px; 
+    background-color: yellow;
+    border-radius: transperant; 
+    margin: auto;
+  /* width and height can be anything, as long as they're equal */
+}
+
+.circle_blue {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px; 
+    background-color: blue;
+    border-radius: transperant; 
+    margin: auto;
+  /* width and height can be anything, as long as they're equal */
+}
+.dataTables_filter input { width: 50px }
+.width35{width: 350px}
+</style>
+
+<center> <h1 style="font-family: Arial;">Hazelton's | Canada - Orders </h1></center>
+
+ <div class="table-css ">
+  
+  
+   
+<table id="table_id" class="display">
+   <thead>
+    <tr>
+      <th>Order </th>
+      <th>Name </th>
+      <th>Zip Code </th>
+      <th style="display: none;">Note</th>
+      <th>Total </th>
+      <th>Tags</th>
+      <th>Fulfillment</th>
+      <th>Fraud</th>
+      <th>Paid</th>
+      <th>Card</th>
+      <th>Tracking Number</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @orders.each do |o| %>
+
+    <tr> 
+     <!-- <td> <input type="checkbox" name="vehicle" value="https://#{@shop_session.url}/admin/products/#{product.id}"> </td>  -->
+      <td style="text-align: left; padding-left: 20px; "><%= link_to o.order_number, "https://#{@shop_session.url}/admin/orders/#{o.id}", target: "_blank" %> </td>
+
+      <td>
+         <%# unless o.shipping_address.nil? %>
+          <%# unless o.shipping_address.first_name.nil? %>
+         <%#=  o.shipping_address.first_name %>
+         <%# end %>
+         <%# end %>
+
+        </td>
+      <td>
+        <% #unless o.shipping_address.nil? %>
+        
+        <%# unless o.shipping_address.zip.nil? %>
+        <%#=  o.shipping_address.zip %>
+        <% #end %>
+        <% #end %>
+
+        </td>
+      <td style="display: none;"><%=  o.note %></td>
+      <td>$ <%=  o.total_price %> </td>
+      <td style="text-align: left; padding-left: 50px;"> <%=   o.tags %> </td>
+      <td>
+      <% if o.fulfillment_status == "fulfilled"%>
+       <div class="circle_green"></div>
+      <% else %>
+      <div class="circle_red"></div> 
+      <% end %>
+      </td>  
+      <td>
+      <% if o.tags.include?  "ufc"%>
+      <div class="circle_red"></div>
+      <% else %>
+      <div class="circle_green"></div>
+      <% end %>
+      </td> 
+      <td>
+      <% if o.financial_status.include?  "unpaid"%>
+      <div class="circle_red"></div>
+      <% elsif o.financial_status.include?  "paid" %>
+      <div class="circle_green"></div>
+      <%else%>
+      <div class="circle_yellow"></div>
+      <% end %>
+      </td>
+      <td>
+      <% if o.note != ""%>
+       <div class="circle_green"></div>
+      <% else %>
+      <div class="circle_red"></div> 
+      <% end %>
+      </td>
+      <td>
+        <% unless o.fulfillments[0].nil? %>
+         <% unless o.fulfillments[0].tracking_number.nil? %>
+        <%= o.fulfillments[0].tracking_number  %>
+        <% end %>
+         <% end %> 
+
+        </td>
+
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  
+$(document).ready( function () {
+    $('#table_id').DataTable();
+    $('input[type="search"]').addClass('width35');
+} );
+
+
+</script>

@@ -1,0 +1,2 @@
+class Orderl < ApplicationRecord
+end
