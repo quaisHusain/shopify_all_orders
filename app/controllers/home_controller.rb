@@ -4,7 +4,7 @@ class HomeController < ShopifyApp::AuthenticatedController
   #	Orderl.delete_all
   	count = ShopifyAPI::Order.find(:count)
   	puts count.count
-  if Orderl.count() < 1
+  if Orderl.count() < ShopifyAPI::Order.count()
   	init_webhooks
   	puts "_________________________ HI _______________________"
   	fetch_all_orders()
@@ -23,15 +23,19 @@ class HomeController < ShopifyApp::AuthenticatedController
 
   def fetch_all_orders
 
-
-  	count = ShopifyAPI::Order.find(:count).count
+  	lastOrder = Orderl.last
+  	lastOrderObj = JSON.parse(lastOrder.order,object_class: OpenStruct)
+    totalCount = ShopifyAPI::Order.count()
+  	remainingCount = ShopifyAPI::Order.count({:since_id => lastOrderObj.id})
+  	count = totalCount - remainingCount
 	pages = count / 250
+	totalPages = totalCount / 250
 	if pages == 0
 		pages = 1
 	end
 	order = nil
-	puts "count = "+count.to_s+" pages = "+pages.to_s
-	1.upto(pages) do |page|
+	puts "count = "+count.to_s+" pages = "+pages.to_s+", totalPages = "+totalPages.to_s
+	pages.upto(totalPages) do |page|
 	  @orders1 = ShopifyAPI::Order.find(:all, params: {limit: 250, page: page, status: 'any'})
 	  #order = orders.find { |o| o.order_number == DESIRED_NUMBER }
 	  
@@ -39,10 +43,16 @@ class HomeController < ShopifyApp::AuthenticatedController
     
 	   
 		@orders1.each do |o| 
-		    @orderl = Orderl.new()
-		    @orderl.order_id = o.id
-			@orderl.order = o.to_json
-			@orderl.save
+			@orderl = Orderl.where(order_id: o.id)
+			if @orderl != nil
+				puts @orderl
+			else
+
+			    @orderl = Orderl.new()
+			    @orderl.order_id = o.id
+				@orderl.order = o.to_json
+				@orderl.save
+			end
 		end
 	end
 
