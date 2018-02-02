@@ -2,20 +2,30 @@ class HomeController < ShopifyApp::AuthenticatedController
 	skip_before_action :verify_authenticity_token, :only => [:webhookCreateaorder]
   def index
   #	Orderl.delete_all
-  	count = ShopifyAPI::Order.find(:count)
-  	puts count.count
+  	count = ShopifyAPI::Order.count({:status=>"any"})
+  	#puts count.count
   if Orderl.count() < ShopifyAPI::Order.count()
   	init_webhooks
   	puts "_________________________ HI _______________________"
-  	fetch_all_orders()
+  	#fetch_all_orders()
   end
-   
-	@orders = []
-	Orderl.find_each do |ol|
+  pages = count / 250
+  if pages == 0
+  	pages = 1
+  elsif pages > 10
+  	pages = 10
+  end
 
-		@orders << JSON.parse(ol.order,object_class: OpenStruct)
+
+   1.upto(pages) do |page|
+	  @orders1 = ShopifyAPI::Order.find(:all, params: {limit: 250, page: page, status: 'any', :order => "created_at DESC"})
+	 end
+	#@orders = []
+	#Orderl.find_each do |ol|
+
+	#	@orders << JSON.parse(ol.order,object_class: OpenStruct)
 		
-	end
+	#end
     # @uri = URI.parse("https://#{@shop_session.url}/admin/orders.json")
   end
  
@@ -36,7 +46,7 @@ class HomeController < ShopifyApp::AuthenticatedController
 	order = nil
 	puts "count = "+count.to_s+" pages = "+pages.to_s+", totalPages = "+totalPages.to_s
 	pages.upto(totalPages) do |page|
-	  @orders1 = ShopifyAPI::Order.find(:all, params: {limit: 250, page: page, status: 'any'})
+	  @orders1 = ShopifyAPI::Order.find(:all, params: {limit: 250, page: page, status: 'any', :order => "created_at DESC"})
 	  #order = orders.find { |o| o.order_number == DESIRED_NUMBER }
 	  
     	
