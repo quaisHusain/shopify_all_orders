@@ -18,7 +18,7 @@ class HomeController < ShopifyApp::AuthenticatedController
 
 
    1.upto(pages) do |page|
-	  @orders1 = ShopifyAPI::Order.find(:all, params: {limit: 250, page: page, status: 'any', :order => "created_at DESC"})
+	  @orders = ShopifyAPI::Order.find(:all, params: {limit: 250, page: page, status: 'any', :order => "created_at DESC"})
 	 end
 	#@orders = []
 	#Orderl.find_each do |ol|
