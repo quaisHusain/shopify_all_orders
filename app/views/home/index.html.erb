@@ -100,6 +100,7 @@ table, th{
       <th>Paid</th>
       <th>Card</th>
       <th>Tracking Number</th>
+      <th>Status</th>
     </tr>
   </thead>
   <tbody>
@@ -167,7 +168,9 @@ table, th{
          <% end %> 
 
         </td>
-
+        <td>
+          <%= o.fulfillment_status%>
+        </td>
       </tr>
       <% end %>
     </tbody>
@@ -175,9 +178,24 @@ table, th{
 </div>
 
 <script>
-  
+  $.fn.dataTable.ext.search.push(function( settings, data, dataIndex ) {
+
+   /* if(data[11] == "fulfilled")
+    {
+      return true;
+    }else{
+      return false;
+    }*/ return true;
+
+  });
 $(document).ready( function () {
-    $('#table_id').DataTable();
+    $('#table_id').DataTable({"columnDefs": [
+            {
+                "targets": [ 11 ],
+                "visible": false,
+               
+            }
+        ]});
     $('input[type="search"]').addClass('width35');
 } );
 
